@@ -1,0 +1,36 @@
+
+.offcanvas {
+    width: 120px; 
+  }
+  
+  .offcanvas-header {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .offcanvas-body {
+    padding: 16px;
+  }
+
+
+@media screen and (max-width: 720px) {
+    #NavbarDiv {
+      display: flex;  
+      justify-content: center;
+      align-items: center;
+      flex-wrap: nowrap;
+      
+    }
+    
+#offcanvasNavbar {
+    width: 40%; 
+  }
+  
+  .offcanvas-header {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .offcanvas-body {
+    padding: 16px;
+  }
+
+  }
