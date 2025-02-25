@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import MaithoLogo from "/logo.png"
 import "./Navbar.css";
 
 const PageHeader = () => {
@@ -41,7 +42,7 @@ const PageHeader = () => {
         {/* Logo */}
         <Navbar.Brand as={Link} to="/" className="mr-8">
           <img
-            src=""
+            src={MaithoLogo}
             alt="maitho"
             className="h-8"
             style={{ height: "25px" }}

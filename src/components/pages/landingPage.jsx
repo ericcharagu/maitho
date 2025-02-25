@@ -10,6 +10,7 @@ import HeroLogo1 from "/hero_1.jpg"
 import HeroLogo2 from "/hero_2.jpg"
 import { GetStartedModal, DemoModal } from '../forms/ModalForm';
 import Grid from '@mui/material/Grid2';
+
 import { 
   Container, 
   Typography, 

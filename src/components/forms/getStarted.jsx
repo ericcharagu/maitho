@@ -36,7 +36,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const SectionSubtitle = styled(Typography)(({ theme }) => ({
-  fontFamily: "'Poppins', sans-serif",
+ // fontFamily: "'Poppins', sans-serif",
   fontSize: "1.1rem",
   marginBottom: theme.spacing(5),
   maxWidth: "800px",
@@ -52,7 +52,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const FormTitle = styled(Typography)(({ theme }) => ({
-  fontFamily: "'Montserrat', sans-serif",
+//   fontFamily: "'Montserrat', sans-serif",
   fontWeight: 600,
   fontSize: "1.5rem",
   marginBottom: theme.spacing(3),
@@ -219,7 +219,7 @@ export default function GetStarted() {
 
               <Grid  md={7}>
                 <StyledPaper elevation={0}>
-                  <FormTitle variant="h3">Enquiry Form</FormTitle>
+                  <FormTitle variant="h3">Inquiry Form</FormTitle>
                   <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                       {/* Personal Info Section */}
@@ -237,7 +237,7 @@ export default function GetStarted() {
                           Personal Information
                         </Typography>
                       </Grid>
-                      <Grid container  spacing={2} id="formGrid" >
+                      <Grid container  spacing={2} sx={{width:"100%"}} >
                       <Grid  size={{ xs: 12, md: 4 }}>
                         
                         <StyledTextField
@@ -476,7 +476,7 @@ export default function GetStarted() {
                             pb: 1,
                           }}
                         >
-                          Enquiry
+                          Inquiry
                         </Typography>
                       </Grid>
 
@@ -509,7 +509,7 @@ export default function GetStarted() {
                         variant="contained"
                         size="large"
                       >
-                        Submit Enquiry
+                        Submit Inquiry
                       </SubmitButton>
                     </Box>
                   </form>
