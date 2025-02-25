@@ -1,68 +1,211 @@
 // App.jsx
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart, LineChart, PieChart } from 'lucide-react';
-import './landingPage.css';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import "./landingPage.css";
+import ZoneDensityCard from "../cards/zoneDensity";
+import VisitorTraffic from "../cards/visitorTraffic";
+import Conversions from "../cards/conversions";
+import AboutUsCard from "../cards/about";
+import HeroLogo1 from "/hero_1.jpg"
+import HeroLogo2 from "/hero_2.jpg"
+import { GetStartedModal, DemoModal } from '../forms/ModalForm';
+import Grid from '@mui/material/Grid2';
+import { 
+  Container, 
+  Typography, 
+  Button, 
+  Box, 
+  useMediaQuery, 
+  Paper
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+import GetStarted from "../forms/getStarted";
 
 const LandingPage = () => {
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
+  
+const HeroSection = styled(Box)(({ theme }) => ({
+  minHeight: '100vh',
+  display: 'flex',
+  overflow: 'hidden',
+  position: 'relative',
+  backgroundColor: '#f8f9fa',
+}));
+
+const ContentContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  width: '100%',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+  },
+}));
+
+const LeftContent = styled(Box)(({ theme }) => ({
+  width: '50%',
+  padding: theme.spacing(4, 6),
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    padding: theme.spacing(4, 2),
+    alignItems: 'center',
+    textAlign: 'center',
+  },
+}));
+
+const RightContent = styled(Box)(({ theme }) => ({
+  width: '50%',
+  display: 'flex',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    flexDirection: 'column',
+  },
+}));
+
+const ImageColumn = styled(Box)(({ theme }) => ({
+  width: '50%',
+  padding: theme.spacing(2),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    padding: theme.spacing(2, 4),
+  },
+}));
+
+const HeroTitle = styled(Typography)(({ theme }) => ({
+  fontFamily: "'Montserrat', sans-serif",
+  fontWeight: 700,
+  fontSize: '3.5rem',
+  marginBottom: theme.spacing(2),
+  color: '#1a237e',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '2.5rem',
+  },
+}));
+
+const HeroSubtitle = styled(Typography)(({ theme }) => ({
+  fontFamily: "'Poppins', sans-serif",
+  fontSize: '1.2rem',
+  marginBottom: theme.spacing(4),
+  maxWidth: '500px',
+  lineHeight: 1.6,
+  color: '#424242',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1rem',
+  },
+}));
+
+const CTAButton = styled(Button)(({ theme }) => ({
+  fontFamily: "'Poppins', sans-serif",
+  backgroundColor: '#3f51b5',
+  color: 'white',
+  padding: theme.spacing(1.5, 4),
+  borderRadius: '30px',
+  textTransform: 'none',
+  fontSize: '1rem',
+  fontWeight: 500,
+  boxShadow: '0 4px 14px 0 rgba(63, 81, 181, 0.4)',
+  '&:hover': {
+    backgroundColor: '#303f9f',
+    boxShadow: '0 6px 20px rgba(63, 81, 181, 0.6)',
+  },
+}));
+
+const StyledImage = styled(motion.img)(({ theme }) => ({
+  maxWidth: '100%',
+  height: 'auto',
+  borderRadius: '8px',
+  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+}));
+  const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+  const handleScroll = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  
   };
 
   return (
     <div className="landing-page">
       {/* Hero Section */}
-      <header className="hero">
-        <div className="hero-overlay"></div>
-        <motion.div 
-          className="hero-content"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1>mAItho</h1>
-          <p>Revolutionizing Retail Analytics with AI-Powered Traffic Pattern Analysis</p>
-          <button className="cta-button">Get Started</button>
-        </motion.div>
-      </header>
+      <HeroSection component="header" className="hero split-hero">
+      <ContentContainer>
+        {/* Left section - Text and button */}
+        <LeftContent className="hero-content-left">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <HeroTitle variant="h1">Maitho</HeroTitle>
+            <HeroSubtitle variant="subtitle1">
+              Revolutionizing Retail Analytics with AI-Powered Human Traffic Pattern Analysis
+            </HeroSubtitle>
+            <CTAButton
+              className="cta-button"
+              onClick={() => handleScroll('start')}
+              variant="contained"
+              size="large"
+            >
+              Get Started
+            </CTAButton>
+          </motion.div>
+        </LeftContent>
 
+        {/* Right section - Two images split in the middle */}
+        <RightContent className="hero-content-right hide-on-mobile">
+          <ImageColumn>
+            <StyledImage
+              src={HeroLogo1}
+              alt="AI Analytics Dashboard"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            />
+          </ImageColumn>
+          <ImageColumn>
+            <StyledImage
+              src={HeroLogo2}
+              alt="Retail Analytics Visualization"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            />
+          </ImageColumn>
+        </RightContent>
+      </ContentContainer>
+    </HeroSection>
+       {/* About us Section */}
+       <motion.section id="about" className="about">
+       <AboutUsCard />
+       </motion.section>
+       
       {/* Features Section */}
-      <section className="features">
-        <h2>Our Technology</h2>
+      <motion.section id="features" className="features">
+        <h2>Real-Time Analytics Dashboard</h2>
         <div className="features-grid">
-          <motion.div {...fadeIn} className="feature-card">
-            <div className="icon-wrapper">
-              <BarChart className="feature-icon" />
-            </div>
-            <h3>OCR Technology</h3>
-            <p>Advanced optical character recognition for precise visitor counting and movement tracking</p>
-          </motion.div>
-
-          <motion.div {...fadeIn} className="feature-card">
-            <div className="icon-wrapper">
-              <LineChart className="feature-icon" />
-            </div>
-            <h3>DeepSORT Analysis</h3>
-            <p>Real-time tracking and pattern recognition for optimal customer flow analysis</p>
-          </motion.div>
-
-          <motion.div {...fadeIn} className="feature-card">
-            <div className="icon-wrapper">
-              <PieChart className="feature-icon" />
-            </div>
-            <h3>Data Analytics</h3>
-            <p>Comprehensive insights for targeted marketing and safety optimization</p>
-          </motion.div>
+          <ZoneDensityCard />
+          <VisitorTraffic />
+          <Conversions />
+          
         </div>
-      </section>
+      </motion.section>
 
       {/* Benefits Section */}
-      <section className="benefits">
+      <motion.section  id="benefits" className="benefits">
         <h2>Key Benefits</h2>
         <div className="benefits-grid">
-          <motion.div 
+          <motion.div
             className="benefit-column"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -76,7 +219,7 @@ const LandingPage = () => {
             </ul>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="benefit-column"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -90,48 +233,30 @@ const LandingPage = () => {
             </ul>
           </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Call to Action */}
-      <section className="cta-section">
+    
+        <Paper elevation={8}>
+      <motion.section id="start"className="cta-section">
+        <div className="cta-div">
         <h2>Ready to Transform Your Space?</h2>
-        <p>Get started with mAItho's intelligent traffic analysis solution today</p>
-        <button className="cta-button white">Request Demo</button>
-      </section>
+        <p>
+ 
+        Transform your retail business with AI-powered analytics. Complete the form below to begin your journey towards smarter, data-driven decision making.
+        </p>    </div>
+      </motion.section>
+  </Paper>
+        <GetStarted/>
+     
 
+{/* Modals */}
+      <DemoModal 
+        isOpen={isDemoOpen} 
+        onClose={() => setIsDemoOpen(false)} 
+      />
       {/* Footer */}
-      <footer>
-        <div className="footer-content">
-          <div className="footer-column">
-            <h3>mAItho</h3>
-            <p>Intelligent Traffic Analysis Solutions</p>
-          </div>
-          <div className="footer-column">
-            <h4>Products</h4>
-            <ul>
-              <li>Traffic Analysis</li>
-              <li>Safety Planning</li>
-              <li>Marketing Insights</li>
-            </ul>
-          </div>
-          <div className="footer-column">
-            <h4>Company</h4>
-            <ul>
-              <li>About Us</li>
-              <li>Contact</li>
-            
-            </ul>
-          </div>
-          <div className="footer-column">
-            <h4>Legal</h4>
-            <ul>
-              <li>Privacy Policy</li>
-              <li>Terms of Service</li>
-              <li>GDPR Compliance</li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   );
 };

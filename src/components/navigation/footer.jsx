@@ -1,28 +1,49 @@
 import React from "react";
 import { Typography } from "@mui/material";
-
+import { motion } from "framer-motion";
+import "../pages/landingPage.css";
 const Footer = () => {
+
+  const handleScroll = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  
+  };
   return (
-    <div
-      className="container"
-      style={{
-        textAlign: "center",
-       
-        backgroundColor: "#f5f5f5",
-        borderTop: "1px solid #e0e0e0",
-        
-      }}
-    >
-      <Typography
-        variant="body2"
-        style={{
-          color: "#666",
-          fontSize: "14px",
-        }}
-      >
-        This website was created by <a href="https://echara.vercel.app/">Echara</a> @2025
-      </Typography>
+    
+    <footer>
+    <div className="footer-content">
+      <div className="footer-column">
+        <h3>Maitho</h3>
+        <p>Intelligent Traffic Analysis Solutions</p>
+      </div>
+      <motion.div id="contact" className="footer-column">
+        <h4>Contact Us</h4>
+        <ul>
+          <li>+254 736 391 323</li>
+          <li>charagu@stratadesigns.co.ke</li>
+          <li>Nairobi</li>
+          <li>Kenya</li>
+        </ul>
+      </motion.div>
+      <div className="footer-column">
+        <h4>Company</h4>
+        <ul>
+          <li onClick={()=>handleScroll('about')}>About Us</li>
+          <li onClick={()=>handleScroll('features')}>Features</li>
+          <li onClick={()=>handleScroll('start')}>Get Started</li>
+          <li onClick={()=>handleScroll('contact')}>Contact</li>
+
+        </ul>
+      </div>
+      
     </div>
+  </footer> 
   );
 };
 

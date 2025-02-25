@@ -89,23 +89,28 @@
   
   /* Features Section */
   .features {
-    padding: 5rem 20px;
+    /* padding: 5rem 20px; */
     background-color: var(--card-bg);
   }
   
   .features h2 {
     text-align: center;
     font-size: 2.5rem;
-    margin-bottom: 4rem;
   }
-  
+  /* 
   .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-  }
+  } */
+   .features-grid{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+   }
   
   .feature-card {
     padding: 2rem;
@@ -134,7 +139,7 @@
   
   /* Benefits Section */
   .benefits {
-    padding: 5rem 20px;
+    padding:20px;
     background-color: var(--light-bg);
   }
   
@@ -181,6 +186,7 @@
     background-color: var(--primary-color);
     color: var(--light-text);
     text-align: center;
+    
   }
   
   .cta-section h2 {
@@ -197,42 +203,50 @@
   footer {
     background-color: var(--dark-bg);
     color: var(--light-text);
-    padding: 4rem 20px;
+    padding:  20px;
   }
   
   .footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    display: flex;
+    justify-content: space-around; /* Distribute space around columns */
+    align-items: center; /* Center columns vertically */
+    width: 100%;
   }
   
-  .footer-column h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+  .footer-column {
+    text-align: center; /* Center text horizontally */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
   }
   
-  .footer-column h4 {
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
+  .footer-column h3,
+  .footer-column h4,
+  .footer-column p,
+  .footer-column ul {
+    margin: 0; /* Remove default margins */
+    padding: 0; /* Remove default padding */
   }
   
   .footer-column ul {
-    list-style: none;
+    list-style-type: none; /* Remove bullet points */
   }
   
-  .footer-column li {
-    margin-bottom: 0.5rem;
-    color: #9ca3af;
+  .footer-column ul li {
+    margin: 5px 0; /* Add some spacing between list items */
   }
-  
+  .footer-column ul li:hover{
+    cursor: pointer;
+  }
   /* Responsive Design */
   @media (max-width: 768px) {
     .hero h1 {
       font-size: 3rem;
     }
-    
+    .hide-on-mobile {
+      display: none !important;
+    }
     .hero p {
       font-size: 1.25rem;
     }
@@ -249,7 +263,10 @@
     }
     
     .footer-content {
-      grid-template-columns: repeat(2, 1fr);
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
     }
   }
   

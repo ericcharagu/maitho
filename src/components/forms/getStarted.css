@@ -1,0 +1,8 @@
+@media (max-width:720px) {
+    #formGrid{
+display: flex;
+flex-direction: column;
+flex-wrap: nowrap;
+width: 100%;
+}
+}
