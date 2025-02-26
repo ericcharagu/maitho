@@ -171,10 +171,15 @@
   .mobile-toggle {
     display: block;
   }
-
+  .navbar{
+    padding:1.5rem 1rem;
+  }
+  .navbar-container{
+    width: 80%;
+  }
   .navbar-links {
     position: fixed;
-    top:50px; /* Height of navbar */
+    top:57px; /* Height of navbar */
     left: 0;
     right: 0;
     background-color: white;
