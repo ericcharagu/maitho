@@ -1,22 +1,15 @@
 import React, { useState } from "react";
-import { Nav, Navbar, NavDropdown, Offcanvas } from "react-bootstrap";
-import { Box } from "@mui/material";
-import { AnimatePresence, motion } from "framer-motion";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import MaithoLogo from "/logo.png"
+import { AnimatePresence, motion } from "framer-motion";
 import "./Navbar.css";
+import MaithoLogo from "/logo_test.png";
 
 const PageHeader = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
-  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    navigate("/");
-  };
   const handleScroll = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -24,162 +17,93 @@ const PageHeader = () => {
         behavior: "smooth",
         block: "start",
       });
-    handleCloseOffcanvas();
-
+      closeMobileMenu();
     }
   };
 
-  const handleCloseOffcanvas = () => setShowOffcanvas(false);
-  const handleShowOffcanvas = () => setShowOffcanvas(true);
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+
+  const navItems = [
+    { id: "about", label: "About us" },
+    { id: "features", label: "Features" },
+    { id: "start", label: "Get Started" },
+    { id: "contact", label: "Contact Us" }
+  ];
 
   return (
-    <Navbar
-      collapseOnSelect
-      expand="lg"
-      className="bg-white border-b px-4 py-2"
-    >
-      <div className="container" id="NavbarDiv">
+    <nav className="navbar">
+      <div className="navbar-container">
         {/* Logo */}
-        <Navbar.Brand as={Link} to="/" className="mr-8">
-          <img
-            src={MaithoLogo}
-            alt="maitho"
-            className="h-8"
-            style={{ height: "25px" }}
-          />
-        </Navbar.Brand>
+        <Link to="/" className="navbar-logo">
+          <img src={MaithoLogo} style={{height:"40px"}} onClick={()=>handleScroll('home')} alt="maitho" className="logo-image" />
+        </Link>
 
-        {/* Toggle Button for Offcanvas */}
-        <Navbar.Toggle
-          aria-controls="offcanvas-navbar"
-          onClick={handleShowOffcanvas}
-        />
-
-        {/* Offcanvas Menu for Mobile */}
-        <Navbar.Offcanvas
-          id="offcanvasNavbar"
-          aria-labelledby="offcanvas-navbar-label"
-          placement="end"
-          show={showOffcanvas}
-          onHide={handleCloseOffcanvas}
+        {/* Mobile Toggle Button */}
+        <button 
+          className="mobile-toggle"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle navigation menu"
         >
-          <Offcanvas.Header closeButton>
-            <Offcanvas.Title id="offcanvas-navbar-label">
-              Maitho{" "}
-            </Offcanvas.Title>
-          </Offcanvas.Header>
-          <Offcanvas.Body>
-            {/* Navigation Tabs */}
-            <Nav className="me-auto">
-              <Nav.Link
-                as={Link}
-                to="/"
-                className={`relative px-3 py-2 ${
-                  currentPath === "/" ? "text-blue-600" : "text-gray-600"
-                }`}
-                onClick={() => handleScroll("about")}
-              >
-                About us
-                {currentPath === "/" && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                    initial={false}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </Nav.Link>
-              <Nav.Link
-                as={Link}
-                to="/"
-                className={`relative px-3 py-2 ${
-                  currentPath === "/" ? "text-blue-600" : "text-gray-600"
-                }`}
-                onClick={() => handleScroll("features")}
-              >
-                Features
-                {currentPath === "/" && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                    initial={false}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </Nav.Link>
+          <span className={`hamburger ${mobileMenuOpen ? 'open' : ''}`}>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </span>
+        </button>
 
-              <Nav.Link
-                as={Link}
-                to="/"
-                className={`relative px-3 py-2 ${
-                  currentPath === "/" ? "text-blue-600" : "text-gray-600"
-                }`}
-                onClick={()=>handleScroll('start')}
-              >
-                Get Started
-                {currentPath === "/" && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                    initial={false}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </Nav.Link>
-              <Nav.Link
-                as={Link}
-                to="/"
-                className={`relative px-3 py-2 ${
-                  currentPath === "/" ? "text-blue-600" : "text-gray-600"
-                }`}
-                onClick={()=>handleScroll('contact')}
-              >
-                Contact Us
-                {currentPath === "/" && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                    initial={false}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </Nav.Link>
-            </Nav>
-
-            {/* User Menu */}
-            {/* <Box className="flex items-center">
-              <NavDropdown
-                title={<PersonOutlineIcon />}
-                id="user-nav-dropdown"
-              >
-                <NavDropdown.Item
-                  as={Link}
-                  to="/profile"
-                  onClick={handleCloseOffcanvas}
+        {/* Navigation Links */}
+        <div className={`navbar-links ${mobileMenuOpen ? 'open' : ''}`}>
+          <ul className="nav-items">
+            {navItems.map((item) => (
+              <li key={item.id} className="nav-item">
+                <Link
+                  to="/"
+                  className={`nav-link ${currentPath === "/" ? "active" : ""}`}
+                  onClick={() => handleScroll(item.id)}
                 >
+                  {item.label}
+                  {currentPath === "/" && (
+                    <motion.div
+                      className="active-indicator"
+                      layoutId={`indicator-${item.id}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* User Menu - Commented out for now but improved structure */}
+          {/* 
+          <div className="user-menu">
+            <div className="dropdown">
+              <button className="dropdown-toggle">
+                <svg className="user-icon" viewBox="0 0 24 24">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+              </button>
+              <div className="dropdown-menu">
+                <Link to="/profile" className="dropdown-item" onClick={closeMobileMenu}>
                   Profile
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={Link}
-                  to="/settings"
-                  onClick={handleCloseOffcanvas}
-                >
+                </Link>
+                <Link to="/settings" className="dropdown-item" onClick={closeMobileMenu}>
                   Settings
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>
+                </Link>
+                <div className="dropdown-divider"></div>
+                <button className="dropdown-item" onClick={() => navigate("/")}>
                   Logout
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Box> */}
-          </Offcanvas.Body>
-        </Navbar.Offcanvas>
+                </button>
+              </div>
+            </div>
+          </div>
+          */}
+        </div>
       </div>
-    </Navbar>
+    </nav>
   );
 };
 

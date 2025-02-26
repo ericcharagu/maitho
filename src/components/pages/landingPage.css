@@ -264,9 +264,12 @@
     
     .footer-content {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       flex-wrap: nowrap;
       justify-content: center;
+    }
+    .footer-content ul{
+      margin: auto;
     }
   }
   
@@ -275,7 +278,5 @@
       font-size: 2.5rem;
     }
     
-    .footer-content {
-      grid-template-columns: 1fr;
-    }
+    
   }

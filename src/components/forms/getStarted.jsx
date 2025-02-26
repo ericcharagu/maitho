@@ -20,31 +20,13 @@ import {
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/material/styles";
 import { Camera, Wifi, CheckCircle, Mail, Phone } from "lucide-react";
-import "./getStarted.css"
+import { supabase } from "../../utils/superbase";
+
+import "./getStarted.css";
 const GetStartedSection = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2, 0),
   backgroundColor: "#f8f9fa",
 }));
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  fontFamily: "'Montserrat', sans-serif",
-  fontWeight: 700,
-  fontSize: "2.5rem",
-  marginBottom: theme.spacing(1),
-  color: "#1a237e",
-  textAlign: "center",
-}));
-
-const SectionSubtitle = styled(Typography)(({ theme }) => ({
- // fontFamily: "'Poppins', sans-serif",
-  fontSize: "1.1rem",
-  marginBottom: theme.spacing(5),
-  maxWidth: "800px",
-  margin: "0 auto",
-  textAlign: "center",
-  color: "#424242",
-}));
-
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: "16px",
@@ -52,7 +34,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const FormTitle = styled(Typography)(({ theme }) => ({
-//   fontFamily: "'Montserrat', sans-serif",
+  //   fontFamily: "'Montserrat', sans-serif",
   fontWeight: 600,
   fontSize: "1.5rem",
   marginBottom: theme.spacing(3),
@@ -63,7 +45,6 @@ const RequirementsList = styled(List)(({ theme }) => ({
   backgroundColor: "rgba(63, 81, 181, 0.05)",
   borderRadius: "8px",
   padding: theme.spacing(2),
-  marginBottom: theme.spacing(4),
 }));
 
 const RequirementItem = styled(ListItem)({
@@ -83,7 +64,7 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: "#bdbdbd",
-      width:"100%"
+      width: "100%",
     },
     "&:hover fieldset": {
       borderColor: "#3f51b5",
@@ -131,7 +112,6 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 }));
 
 const FormContainer = styled(Box)(({ theme }) => ({
-  maxWidth: "100vw",
   margin: "0 auto",
 }));
 
@@ -140,20 +120,50 @@ export default function GetStarted() {
     name: "",
     business: "",
     location: "",
-    country:"",
+    country: "",
     email: "",
     phone: "",
     camerasInstalled: "yes",
-    estimateRange: "1-50",
+    estimateCamera: "1-50",
     internetConnection: "yes",
-    inquiry: "",
   });
+  // Loading and success states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
-    // You could add API call here
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Make request to Supabase REST API using axios
+      console.log(formData)
+      const { data, error } = await supabase
+        .from("getstarted")
+        .insert([formData]);
+      setSubmitSuccess(true);
+    
+      // Reset form after successful submission
+       setFormData({
+        name: "",
+        business: "",
+        location: "",
+        country: "",
+        email: "",
+        phone: "",
+        camerasInstalled: "yes",
+    estimateCamera: "1-50",
+    internetConnection: "yes",
+      }); 
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to submit form");
+      console.error("Form submission error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -164,6 +174,17 @@ export default function GetStarted() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
+          {submitSuccess && (
+            <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
+              Form submitted successfully!
+            </div>
+          )}
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           <FormContainer>
             <Grid
               container
@@ -175,7 +196,7 @@ export default function GetStarted() {
                 flexWrap: "nowrap",
               }}
             >
-              <Grid item  md={5}>
+              <Grid item md={5}>
                 <div>
                   <RequirementsList>
                     <FormTitle variant="h3">Requirements</FormTitle>
@@ -217,13 +238,13 @@ export default function GetStarted() {
                 </div>
               </Grid>
 
-              <Grid  md={7}>
+              <Grid md={7}>
                 <StyledPaper elevation={0}>
-                  <FormTitle variant="h3">Inquiry Form</FormTitle>
+                  {/* <FormTitle variant="h3">Information</FormTitle> */}
                   <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                       {/* Personal Info Section */}
-                      <Grid  sx={{mt:2, width:"100%"}}>
+                      <Grid sx={{ mt: 2, width: "100%" }}>
                         <Typography
                           variant="subtitle1"
                           sx={{
@@ -237,75 +258,80 @@ export default function GetStarted() {
                           Personal Information
                         </Typography>
                       </Grid>
-                      <Grid container  spacing={2} sx={{width:"100%"}} >
-                      <Grid  size={{ xs: 12, md: 4 }}>
-                        
-                        <StyledTextField
-                          fullWidth
-                          label="Full Name"
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) =>
-                            setFormData({ ...formData, name: e.target.value })
-                          }
-                          required
-                          variant="outlined"
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        />
-                      </Grid>
+                      <Grid container spacing={2} sx={{ width: "100%" }}>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                          <StyledTextField
+                            fullWidth
+                            label="Full Name"
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) =>
+                              setFormData({ ...formData, name: e.target.value })
+                            }
+                            required
+                            variant="outlined"
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          />
+                        </Grid>
 
-                      <Grid  size={{ xs: 12, md: 4 }} >
-                        <StyledTextField
-                          fullWidth
-                          label="Email Address"
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) =>
-                            setFormData({ ...formData, email: e.target.value })
-                          }
-                          required
-                          variant="outlined"
-                          InputProps={{
-                            startAdornment: (
-                              <Mail
-                                size={18}
-                                color="#757575"
-                                style={{ marginRight: "8px" }}
-                              />
-                            ),
-                          }}
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        />
-                      </Grid>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                          <StyledTextField
+                            fullWidth
+                            label="Email Address"
+                            id="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                email: e.target.value,
+                              })
+                            }
+                            required
+                            variant="outlined"
+                            InputProps={{
+                              startAdornment: (
+                                <Mail
+                                  size={18}
+                                  color="#757575"
+                                  style={{ marginRight: "8px" }}
+                                />
+                              ),
+                            }}
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          />
+                        </Grid>
 
-                      <Grid  size={{ xs: 12, md: 4 }}>
-                        <StyledTextField
-                          fullWidth
-                          label="Phone Number"
-                          id="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) =>
-                            setFormData({ ...formData, phone: e.target.value })
-                          }
-                          required
-                          variant="outlined"
-                          InputProps={{
-                            startAdornment: (
-                              <Phone
-                                size={18}
-                                color="#757575"
-                                style={{ marginRight: "8px" }}
-                              />
-                            ),
-                          }}
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        />
+                        <Grid size={{ xs: 12, md: 4 }}>
+                          <StyledTextField
+                            fullWidth
+                            label="Phone Number"
+                            id="phone"
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                phone: e.target.value,
+                              })
+                            }
+                            required
+                            variant="outlined"
+                            InputProps={{
+                              startAdornment: (
+                                <Phone
+                                  size={18}
+                                  color="#757575"
+                                  style={{ marginRight: "8px" }}
+                                />
+                              ),
+                            }}
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          />
+                        </Grid>
                       </Grid>
-                          </Grid>
                       {/* Business Info Section */}
-                      <Grid  sx={{ mt: 2 , width:"100%"}}>
+                      <Grid sx={{ mt: 2, width: "100%" }}>
                         <Typography
                           variant="subtitle1"
                           sx={{
@@ -319,62 +345,62 @@ export default function GetStarted() {
                           Business Information
                         </Typography>
                       </Grid>
-                      <Grid container  spacing={2} sx={{width:'100%'}} >
-                      <Grid  size={{ xs: 12, md: 4 }}>
-                        <StyledTextField
-                          fullWidth
-                          label="Business Name"
-                          id="business"
-                          value={formData.business}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              business: e.target.value,
-                            })
-                          }
-                          required
-                          variant="outlined"
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        />
-                      </Grid>
+                      <Grid container spacing={2} sx={{ width: "100%" }}>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                          <StyledTextField
+                            fullWidth
+                            label="Business Name"
+                            id="business"
+                            value={formData.business}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                business: e.target.value,
+                              })
+                            }
+                            required
+                            variant="outlined"
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          />
+                        </Grid>
 
-                      <Grid  size={{ xs: 12, md: 4 }}>
-                        <StyledTextField
-                          fullWidth
-                          label="State/County/Province"
-                          id="location"
-                          value={formData.location}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              location: e.target.value,
-                            })
-                          }
-                          required
-                          variant="outlined"
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        />
+                        <Grid size={{ xs: 12, md: 4 }}>
+                          <StyledTextField
+                            fullWidth
+                            label="State/County/Province"
+                            id="location"
+                            value={formData.location}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                location: e.target.value,
+                              })
+                            }
+                            required
+                            variant="outlined"
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          />
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                          <StyledTextField
+                            fullWidth
+                            label="Country"
+                            id="country"
+                            value={formData.country}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                country: e.target.value,
+                              })
+                            }
+                            required
+                            variant="outlined"
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid  size={{ xs: 12, md: 4 }}>
-                        <StyledTextField
-                          fullWidth
-                          label="Country"
-                          id="country"
-                          value={formData.country}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              country: e.target.value,
-                            })
-                          }
-                          required
-                          variant="outlined"
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        />
-                      </Grid>
-</Grid>
                       {/* Technical Requirements Section */}
-                      <Grid xs={4} sx={{ mt: 2 , width:"100%"}}>
+                      <Grid xs={4} sx={{ mt: 2, width: "100%" }}>
                         <Typography
                           variant="subtitle1"
                           sx={{
@@ -390,7 +416,12 @@ export default function GetStarted() {
                       </Grid>
 
                       {/* Evenly spaced technical requirement fields */}
-                      <Grid container  spacing={3} sx={{width:'100%'}} id="formGrid" >
+                      <Grid
+                        container
+                        spacing={3}
+                        sx={{ width: "100%" }}
+                        id="formGrid"
+                      >
                         <Grid size={{ xs: 12, md: 4 }}>
                           <StyledFormControl fullWidth>
                             <InputLabel id="cameras-label">
@@ -414,7 +445,7 @@ export default function GetStarted() {
                           </StyledFormControl>
                         </Grid>
 
-                        <Grid  size={{ xs: 12, md: 4 }}>
+                        <Grid size={{ xs: 12, md: 4 }}>
                           <StyledFormControl fullWidth>
                             <InputLabel id="internet-label">
                               Internet Connection
@@ -437,7 +468,7 @@ export default function GetStarted() {
                           </StyledFormControl>
                         </Grid>
 
-                        <Grid  size={{ xs: 12, md: 4 }}>
+                        <Grid size={{ xs: 12, md: 4 }}>
                           <StyledFormControl fullWidth>
                             <InputLabel id="estimate-label">
                               Camera Estimate
@@ -445,12 +476,12 @@ export default function GetStarted() {
                             <Select
                               labelId="estimate-label"
                               id="estimate"
-                              value={formData.estimateRange}
+                              value={formData.estimateCamera}
                               label="Camera Estimate"
                               onChange={(e) =>
                                 setFormData({
                                   ...formData,
-                                  estimateRange: e.target.value,
+                                  estimateCamera: e.target.value,
                                 })
                               }
                             >
@@ -463,42 +494,6 @@ export default function GetStarted() {
                           </StyledFormControl>
                         </Grid>
                       </Grid>
-
-                      {/* Inquiry Section */}
-                      <Grid   sx={{ mt: 2 , width:"100%"}}>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{
-                            fontWeight: 600,
-                            mb: 1,
-                            color: "#3f51b5",
-                            borderBottom: "1px solid #e0e0e0",
-                            pb: 1,
-                          }}
-                        >
-                          Inquiry
-                        </Typography>
-                      </Grid>
-
-                      <Grid  size={12}>
-                        <StyledTextField
-                          fullWidth
-                          label="Your Inquiry or Comments"
-                          id="inquiry"
-                          value={formData.inquiry}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              inquiry: e.target.value,
-                            })
-                          }
-                          variant="outlined"
-                          multiline
-                          rows={4}
-                          placeholder="Please share any questions, specific requirements, or additional information about your business needs..."
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        />
-                      </Grid>
                     </Grid>
 
                     <Box
@@ -509,7 +504,7 @@ export default function GetStarted() {
                         variant="contained"
                         size="large"
                       >
-                        Submit Inquiry
+                        Get Started
                       </SubmitButton>
                     </Box>
                   </form>

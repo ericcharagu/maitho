@@ -6,9 +6,8 @@ import ZoneDensityCard from "../cards/zoneDensity";
 import VisitorTraffic from "../cards/visitorTraffic";
 import Conversions from "../cards/conversions";
 import AboutUsCard from "../cards/about";
-import HeroLogo1 from "/hero_1.jpg"
-import HeroLogo2 from "/hero_2.jpg"
-import { GetStartedModal, DemoModal } from '../forms/ModalForm';
+import HeroTop from "/hero_top.png"
+import HeroBottom from "/hero_btm.png"
 import Grid from '@mui/material/Grid2';
 
 import { 
@@ -57,7 +56,10 @@ const LeftContent = styled(Box)(({ theme }) => ({
 
 const RightContent = styled(Box)(({ theme }) => ({
   width: '50%',
+  height:'100vh',
   display: 'flex',
+  flexDirection:'column', 
+  alignItems:'center',
   [theme.breakpoints.down('md')]: {
     width: '100%',
     flexDirection: 'column',
@@ -65,9 +67,11 @@ const RightContent = styled(Box)(({ theme }) => ({
 }));
 
 const ImageColumn = styled(Box)(({ theme }) => ({
-  width: '50%',
+  maxWidth: '100%',
   padding: theme.spacing(2),
+  margin:'auto',
   display: 'flex',
+  flexDirection:'column',
   alignItems: 'center',
   justifyContent: 'center',
   [theme.breakpoints.down('md')]: {
@@ -117,7 +121,7 @@ const CTAButton = styled(Button)(({ theme }) => ({
 
 const StyledImage = styled(motion.img)(({ theme }) => ({
   maxWidth: '100%',
-  height: 'auto',
+  height: '100%',
   borderRadius: '8px',
   boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
 }));
@@ -139,7 +143,7 @@ const StyledImage = styled(motion.img)(({ theme }) => ({
   return (
     <div className="landing-page">
       {/* Hero Section */}
-      <HeroSection component="header" className="hero split-hero">
+      <HeroSection id="home" component="header" className="hero split-hero">
       <ContentContainer>
         {/* Left section - Text and button */}
         <LeftContent className="hero-content-left">
@@ -167,7 +171,7 @@ const StyledImage = styled(motion.img)(({ theme }) => ({
         <RightContent className="hero-content-right hide-on-mobile">
           <ImageColumn>
             <StyledImage
-              src={HeroLogo1}
+              src={HeroTop}
               alt="AI Analytics Dashboard"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -176,7 +180,7 @@ const StyledImage = styled(motion.img)(({ theme }) => ({
           </ImageColumn>
           <ImageColumn>
             <StyledImage
-              src={HeroLogo2}
+              src={HeroBottom}
               alt="Retail Analytics Visualization"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -251,11 +255,6 @@ const StyledImage = styled(motion.img)(({ theme }) => ({
         <GetStarted/>
      
 
-{/* Modals */}
-      <DemoModal 
-        isOpen={isDemoOpen} 
-        onClose={() => setIsDemoOpen(false)} 
-      />
       {/* Footer */}
       
     </div>
