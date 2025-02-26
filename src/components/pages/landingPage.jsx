@@ -9,7 +9,7 @@ import AboutUsCard from "../cards/about";
 import HeroTop from "/hero_top.png"
 import HeroBottom from "/hero_btm.png"
 import Grid from '@mui/material/Grid2';
-
+import MaithoLogo from "/logo_test.png";
 import { 
   Container, 
   Typography, 
@@ -25,7 +25,7 @@ import GetStarted from "../forms/getStarted";
 const LandingPage = () => {
   
 const HeroSection = styled(Box)(({ theme }) => ({
-  minHeight: '100vh',
+  minHeight: '90vh',
   display: 'flex',
   overflow: 'hidden',
   position: 'relative',
@@ -56,7 +56,7 @@ const LeftContent = styled(Box)(({ theme }) => ({
 
 const RightContent = styled(Box)(({ theme }) => ({
   width: '50%',
-  height:'100vh',
+  height:'auto',
   display: 'flex',
   flexDirection:'column', 
   alignItems:'center',
@@ -67,9 +67,9 @@ const RightContent = styled(Box)(({ theme }) => ({
 }));
 
 const ImageColumn = styled(Box)(({ theme }) => ({
-  maxWidth: '100%',
-  padding: theme.spacing(2),
-  margin:'auto',
+  maxWidth: '80%',
+  padding: theme.spacing(1),
+ 
   display: 'flex',
   flexDirection:'column',
   alignItems: 'center',
@@ -151,9 +151,26 @@ const StyledImage = styled(motion.img)(({ theme }) => ({
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
+            style={{textAlign:'center'}}
           >
-            <HeroTitle variant="h1">Maitho</HeroTitle>
-            <HeroSubtitle variant="subtitle1">
+<HeroTitle 
+  variant="h1" 
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    gap: "12px", justifyContent: "center"
+  }}
+>
+  <img 
+    src={MaithoLogo} 
+    alt="Maitho Logo" 
+    style={{
+      maxHeight: '80px',
+      verticalAlign: 'middle'
+    }} 
+  />
+  Maitho
+</HeroTitle>            <HeroSubtitle variant="subtitle1">
               Revolutionizing Retail Analytics with AI-Powered Human Traffic Pattern Analysis
             </HeroSubtitle>
             <CTAButton

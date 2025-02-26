@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Container,
@@ -16,17 +16,151 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Autocomplete,
+  IconButton,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/material/styles";
 import { Camera, Wifi, CheckCircle, Mail, Phone } from "lucide-react";
 import { supabase } from "../../utils/superbase";
 
 import "./getStarted.css";
+
+// Dictionary of African countries and their states/provinces/counties
+const africanCountriesAndRegions = {
+  Kenya: [
+    "Nairobi",
+    "Mombasa",
+    "Kisumu",
+    "Nakuru",
+    "Eldoret",
+    "Kiambu",
+    "Machakos",
+    "Kajiado",
+    "Nyeri",
+    "Uasin Gishu",
+  ],
+  Nigeria: [
+    "Lagos",
+    "Kano",
+    "Abuja",
+    "Rivers",
+    "Oyo",
+    "Delta",
+    "Kaduna",
+    "Imo",
+    "Kwara",
+    "Plateau",
+  ],
+  "South Africa": [
+    "Gauteng",
+    "Western Cape",
+    "KwaZulu-Natal",
+    "Eastern Cape",
+    "Free State",
+    "Mpumalanga",
+    "North West",
+    "Limpopo",
+    "Northern Cape",
+  ],
+  Ghana: [
+    "Greater Accra",
+    "Ashanti",
+    "Eastern",
+    "Western",
+    "Central",
+    "Northern",
+    "Volta",
+    "Brong-Ahafo",
+    "Upper East",
+    "Upper West",
+  ],
+  Ethiopia: [
+    "Addis Ababa",
+    "Oromia",
+    "Amhara",
+    "Tigray",
+    "Sidama",
+    "Somali",
+    "Southern Nations",
+    "Afar",
+    "Benishangul-Gumuz",
+    "Gambela",
+  ],
+  Tanzania: [
+    "Dar es Salaam",
+    "Arusha",
+    "Dodoma",
+    "Mwanza",
+    "Zanzibar",
+    "Kilimanjaro",
+    "Tanga",
+    "Mbeya",
+    "Morogoro",
+    "Iringa",
+  ],
+  Egypt: [
+    "Cairo",
+    "Alexandria",
+    "Giza",
+    "Shubra El-Kheima",
+    "Port Said",
+    "Suez",
+    "Luxor",
+    "Aswan",
+    "Asyut",
+    "Sinai",
+  ],
+  Uganda: [
+    "Kampala",
+    "Wakiso",
+    "Mukono",
+    "Jinja",
+    "Gulu",
+    "Mbarara",
+    "Masaka",
+    "Lira",
+    "Arua",
+    "Mbale",
+  ],
+  Morocco: [
+    "Casablanca",
+    "Rabat",
+    "Marrakesh",
+    "Fes",
+    "Tangier",
+    "Agadir",
+    "Meknes",
+    "Oujda",
+    "Kenitra",
+    "Tetouan",
+  ],
+  "Côte d'Ivoire": [
+    "Abidjan",
+    "Bouaké",
+    "Daloa",
+    "Yamoussoukro",
+    "Korhogo",
+    "San-Pédro",
+    "Divo",
+    "Man",
+    "Gagnoa",
+    "Abengourou",
+  ],
+};
+
+// List of all African countries for the dropdown
+const africanCountries = Object.keys(africanCountriesAndRegions).sort();
+
+// Component styling
 const GetStartedSection = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2, 0),
   backgroundColor: "#f8f9fa",
 }));
+
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: "16px",
@@ -34,7 +168,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const FormTitle = styled(Typography)(({ theme }) => ({
-  //   fontFamily: "'Montserrat', sans-serif",
   fontWeight: 600,
   fontSize: "1.5rem",
   marginBottom: theme.spacing(3),
@@ -127,27 +260,97 @@ export default function GetStarted() {
     estimateCamera: "1-50",
     internetConnection: "yes",
   });
+
+  // State for available regions based on selected country
+  const [availableRegions, setAvailableRegions] = useState([]);
+
   // Loading and success states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState(null);
 
+  // Form validation
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    phone: false,
+    business: false,
+  });
+
+  // Update available regions when country changes and handle submit success timeout
+useEffect(() => {
+  // Handle success message timeout
+  let timer;
+  if (submitSuccess) {
+    timer = setTimeout(() => {
+      setSubmitSuccess(false);
+    }, 10000);
+  }
+  
+  // Handle country change and update regions
+  if (formData.country && africanCountriesAndRegions[formData.country]) {
+    setAvailableRegions(africanCountriesAndRegions[formData.country]);
+    // Reset location if the country changes
+    setFormData((prev) => ({ ...prev, location: "" }));
+  } else {
+    setAvailableRegions([]);
+  }
+  
+  // Cleanup function
+  return () => {
+    clearTimeout(timer);
+  };
+}, [formData.country, submitSuccess]);
+
+  // Validation functions
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    // Basic phone validation - allows different formats like +XX XXX XXX XXXX
+    const regex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,4}[-\s.]?[0-9]{1,9}$/;
+    return regex.test(phone);
+  };
+
+  // Handle form validation
+  const validateForm = () => {
+    const newErrors = {
+      name: !formData.name.trim(),
+      email: !validateEmail(formData.email),
+      phone: !validatePhone(formData.phone),
+      business: !formData.business.trim(),
+    };
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error);
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
-      // Make request to Supabase REST API using axios
-      console.log(formData)
+      // Make request to Supabase REST API
+
       const { data, error } = await supabase
         .from("getstarted")
         .insert([formData]);
+
+      if (error) throw new Error(error.message);
+
       setSubmitSuccess(true);
-    
+
       // Reset form after successful submission
-       setFormData({
+      /* setFormData({
         name: "",
         business: "",
         location: "",
@@ -155,14 +358,28 @@ export default function GetStarted() {
         email: "",
         phone: "",
         camerasInstalled: "yes",
-    estimateCamera: "1-50",
-    internetConnection: "yes",
-      }); 
+        estimateCamera: "1-50",
+        internetConnection: "yes",
+      });  */
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to submit form");
+      setError(err.message || "Failed to submit form");
       console.error("Form submission error:", err);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Handle phone number input to only allow numbers, +, -, spaces and parentheses
+  const handlePhoneInput = (e) => {
+    const value = e.target.value;
+    const regex = /^[0-9+\-() ]*$/;
+
+    if (regex.test(value) || value === "") {
+      setFormData({ ...formData, phone: value });
+      // Clear error if valid
+      if (validatePhone(value)) {
+        setErrors({ ...errors, phone: false });
+      }
     }
   };
 
@@ -174,17 +391,6 @@ export default function GetStarted() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {submitSuccess && (
-            <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
-              Form submitted successfully!
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-              {error}
-            </div>
-          )}
           <FormContainer>
             <Grid
               container
@@ -240,7 +446,6 @@ export default function GetStarted() {
 
               <Grid md={7}>
                 <StyledPaper elevation={0}>
-                  {/* <FormTitle variant="h3">Information</FormTitle> */}
                   <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                       {/* Personal Info Section */}
@@ -268,6 +473,8 @@ export default function GetStarted() {
                             onChange={(e) =>
                               setFormData({ ...formData, name: e.target.value })
                             }
+                            error={errors.name}
+                            helperText={errors.name ? "Name is required" : ""}
                             required
                             variant="outlined"
                             sx={{ display: "flex", justifyContent: "center" }}
@@ -281,11 +488,18 @@ export default function GetStarted() {
                             id="email"
                             type="email"
                             value={formData.email}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               setFormData({
                                 ...formData,
                                 email: e.target.value,
-                              })
+                              });
+                              if (validateEmail(e.target.value)) {
+                                setErrors({ ...errors, email: false });
+                              }
+                            }}
+                            error={errors.email}
+                            helperText={
+                              errors.email ? "Valid email is required" : ""
                             }
                             required
                             variant="outlined"
@@ -307,13 +521,13 @@ export default function GetStarted() {
                             fullWidth
                             label="Phone Number"
                             id="phone"
-                            type="tel"
                             value={formData.phone}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                phone: e.target.value,
-                              })
+                            onChange={handlePhoneInput}
+                            error={errors.phone}
+                            helperText={
+                              errors.phone
+                                ? "Valid phone number is required"
+                                : ""
                             }
                             required
                             variant="outlined"
@@ -358,6 +572,10 @@ export default function GetStarted() {
                                 business: e.target.value,
                               })
                             }
+                            error={errors.business}
+                            helperText={
+                              errors.business ? "Business name is required" : ""
+                            }
                             required
                             variant="outlined"
                             sx={{ display: "flex", justifyContent: "center" }}
@@ -365,38 +583,58 @@ export default function GetStarted() {
                         </Grid>
 
                         <Grid size={{ xs: 12, md: 4 }}>
-                          <StyledTextField
-                            fullWidth
-                            label="State/County/Province"
-                            id="location"
-                            value={formData.location}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                location: e.target.value,
-                              })
-                            }
-                            required
-                            variant="outlined"
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          />
+                          <StyledFormControl fullWidth>
+                            <InputLabel id="country-label">Country</InputLabel>
+                            <Select
+                              labelId="country-label"
+                              id="country"
+                              value={formData.country}
+                              label="Country"
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  country: e.target.value,
+                                })
+                              }
+                              required
+                            >
+                              {africanCountries.map((country) => (
+                                <MenuItem key={country} value={country}>
+                                  {country}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </StyledFormControl>
                         </Grid>
+
                         <Grid size={{ xs: 12, md: 4 }}>
-                          <StyledTextField
+                          <StyledFormControl
                             fullWidth
-                            label="Country"
-                            id="country"
-                            value={formData.country}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                country: e.target.value,
-                              })
-                            }
-                            required
-                            variant="outlined"
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          />
+                            disabled={!formData.country}
+                          >
+                            <InputLabel id="location-label">
+                              State/County/Province
+                            </InputLabel>
+                            <Select
+                              labelId="location-label"
+                              id="location"
+                              value={formData.location}
+                              label="State/County/Province"
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  location: e.target.value,
+                                })
+                              }
+                              required
+                            >
+                              {availableRegions.map((region) => (
+                                <MenuItem key={region} value={region}>
+                                  {region}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </StyledFormControl>
                         </Grid>
                       </Grid>
                       {/* Technical Requirements Section */}
@@ -503,9 +741,55 @@ export default function GetStarted() {
                         type="submit"
                         variant="contained"
                         size="large"
+                        disabled={isSubmitting}
                       >
-                        Get Started
+                        {isSubmitting ? "Submitting..." : "Get Started"}
                       </SubmitButton>
+                    </Box>
+                    <Box sx={{ mt: 3 }}>
+                    {submitSuccess && (
+  <Alert 
+    severity="success"
+    sx={{
+      textAlign: "center",
+      "& .MuiAlert-message": {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+    }}
+    onClose={() => setSubmitSuccess(false)}
+    action={
+      <IconButton
+        aria-label="close"
+        color="inherit"
+        size="small"
+        onClick={() => setSubmitSuccess(false)}
+      >
+        <CloseIcon fontSize="inherit" />
+      </IconButton>
+    }
+  >
+    <strong>Success.</strong> Form submitted successfully! Our team will contact you shortly.
+  </Alert>
+)}
+                      {error && (
+                        <Alert
+                          severity="error"
+                          icon={<AlertCircle size={24} />}
+                          sx={{
+                            mb: 3,
+                            borderRadius: 2,
+                            "& .MuiAlert-message": {
+                              display: "flex",
+                              alignItems: "center",
+                            },
+                          }}
+                        >
+                          <AlertTitle>Error</AlertTitle>
+                          {error}
+                        </Alert>
+                      )}
                     </Box>
                   </form>
                 </StyledPaper>

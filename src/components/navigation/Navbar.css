@@ -174,7 +174,7 @@
 
   .navbar-links {
     position: fixed;
-    top:86px; /* Height of navbar */
+    top:50px; /* Height of navbar */
     left: 0;
     right: 0;
     background-color: white;
